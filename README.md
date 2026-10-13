@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GC-Sys — site institucional
 
-## Getting Started
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Motion · Lucide.
+A marca oficial é **GC-Sys** (`src/config/site.ts`). Logotipos em `public/branding/` (originais com fundo escuro + versões transparentes usadas no site).
 
-First, run the development server:
+## Como rodar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build && npm start
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## O que você precisa preencher (nada é inventado)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Tudo em **`src/config/site.ts`**. Campos vazios simplesmente não aparecem no site.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Item | Onde |
+|---|---|
+| Nome da empresa, razão social, CNPJ, DPO | `name`, `legal.*` |
+| E-mail, WhatsApp (só dígitos com DDI), cidade | `contact.*` |
+| LinkedIn / GitHub / Instagram | `social.*` |
+| História institucional (opcional) | `about.story` |
+| Domínio | `NEXT_PUBLIC_SITE_URL` (ver `.env.example`) |
+| Tecnologias | `technologies[].confirmed` — **só marque `true` após validar**. Em produção, itens não confirmados não são exibidos (a seção some se nenhum estiver confirmado). |
 
-## Learn More
+## Formulário de contato
 
-To learn more about Next.js, take a look at the following resources:
+O formulário valida no cliente e no servidor (`src/lib/contact.ts`) e envia para `POST /api/contato`.
+**Sem provedor configurado, a API responde 503 e o formulário avisa o visitante** — nenhuma mensagem é descartada em silêncio.
+Configure no host (nunca no código): Resend (`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`) **ou** `CONTACT_WEBHOOK_URL`.
+Recomenda-se acrescentar limitação de taxa (ex.: no provedor de hospedagem) antes do lançamento.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estrutura
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/app          rotas (/, /servicos, /servicos/[slug], /solucoes, /sobre, /contato, /privacidade, /termos, /api/contato, sitemap, robots, og image)
+src/config       site.ts (dados da empresa) · content.ts (serviços, processo, princípios, soluções)
+src/components   ui · layout · sections · visuals (HeroSystem, mockups) · forms
+src/lib          metadata, validação, utilidades
+```
 
-## Deploy on Vercel
+Design tokens (cores, escala tipográfica fluida, grade) estão em `src/app/globals.css`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Observações de conteúdo
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Interfaces de sistema são **conceituais, com dados demonstrativos**, e rotuladas como tal.
+- Política de privacidade e Termos são textos-base: **revise com assessoria jurídica** antes de publicar.
+- Seção "Forma de trabalho" em `/sobre` descreve práticas; confirme que refletem a operação real.
